@@ -1,5 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <sstream>
+#include <SFML/Audio.hpp>
+#include <iostream>
 
 const float TREE_HORIZONTAL_POSITION = 810;
 const float TREE_VERTICAL_POSITION = 0;
@@ -177,6 +179,24 @@ int main()
     // Control the player input
     bool acceptInput = false;
 
+    // Prepare the sound
+    sf::SoundBuffer chopBuffer;
+    if(chopBuffer.loadFromFile("sounds/chop.wav")){
+        std::cout << "Failed to load chop.wav" << std:: endl;
+    }
+    sf::Sound chop;
+    chop.setBuffer(chopBuffer);
+
+    sf::SoundBuffer deathBuffer;
+    deathBuffer.loadFromFile("sounds/death.wav");
+    sf::Sound death;
+    death.setBuffer(deathBuffer);
+
+    sf::SoundBuffer ootBuffer;
+    ootBuffer.loadFromFile("sounds/out_of_time.wav");
+    sf::Sound outOfTime;
+    outOfTime.setBuffer(ootBuffer);
+
     while (window.isOpen())
     {
         // Handle player input
@@ -249,6 +269,9 @@ int main()
                 logActive = true;
 
                 acceptInput = false;
+                
+                // Play a chop sound
+                chop.play();
             }
 
             // Handle the left cursor key
@@ -274,6 +297,11 @@ int main()
                 spriteLog.setPosition(810, 720);
                 logSpeedX = 5000;
                 logActive = true;
+
+                acceptInput = false;
+
+                // Play chop sound
+                chop.play();
             }
         }
 
@@ -307,6 +335,9 @@ int main()
                                           textRect.height / 2.0f);
 
                 messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
+
+                //Play out of time sound
+                outOfTime.play();
             }
 
             // Setup the bee
@@ -442,6 +473,52 @@ int main()
                     // Hide the branch
                     branches[i].setPosition(3000, height);
                 }
+            }
+
+            // Handle a flying log
+            if (logActive)
+            {
+                spriteLog.setPosition(
+                    spriteLog.getPosition().x +
+                        (logSpeedX * dt.asSeconds()),
+                    spriteLog.getPosition().y +
+                        (logSpeedY * dt.asSeconds()));
+
+                // Has log reached an edge?
+                if (spriteLog.getPosition().x < -100 ||
+                    spriteLog.getPosition().x > 2000)
+                {
+                    // Set new log for next frame
+                    logActive = false;
+                    spriteLog.setPosition(810, 720);
+                }
+            }
+
+            if(branchPositions[5] == playerSide){
+                //death
+                paused = true;
+                acceptInput = false;
+
+                // Draw the gravestone
+                spriteRIP.setPosition(525, 760);
+
+                // hide the player
+                spritePlayer.setPosition(2000, 660);
+
+                // Change the test of the message
+                messageText.setString("SQUISHED!!");
+
+                // Center it on the screen
+                sf::FloatRect  textRect = messageText.getLocalBounds();
+                messageText.setOrigin(textRect.left + 
+                    textRect.width / 2.0f, 
+                    textRect.top + textRect.height / 2.0f);
+
+                messageText.setPosition(1920 / 2.0f, 
+                1080 / 2.0f);
+
+                //Play death sound
+                death.play();
             }
         }
 
