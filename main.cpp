@@ -181,6 +181,20 @@ int main()
     {
         // Handle player input
 
+        sf::Event event;
+
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::KeyReleased && !paused)
+            {
+                // Listen for key presses again
+                acceptInput = true;
+
+                // hide the axe
+                spriteAxe.setPosition(200, spriteAxe.getPosition().y);
+            }
+        }
+
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
         {
             window.close();
@@ -210,9 +224,57 @@ int main()
         }
 
         // Wrap player controls to maker sure we are accepting input
-        if(acceptInput)
+        if (acceptInput)
         {
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+            {
+                // Make sure player is on the right
+                playerSide = side::RIGHT;
+                score++;
 
+                // Add to the amount of time remaining
+                timeRemaining += (2 / score) + .15;
+
+                spriteAxe.setPosition(AXE_POSITION_RIGHT,
+                                      spriteAxe.getPosition().y);
+
+                spritePlayer.setPosition(1200, 720);
+
+                // Update the branches
+                updateBranches(score);
+
+                // Set the log flying to the left
+                spriteLog.setPosition(810, 720);
+                logSpeedX = -5000;
+                logActive = true;
+
+                acceptInput = false;
+            }
+
+            // Handle the left cursor key
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+            {
+                // Make sure the player is on the left
+                playerSide = side::LEFT;
+
+                score++;
+
+                // Add to the amount of time remaining
+                timeRemaining += (2 / score) + .15;
+
+                spriteAxe.setPosition(AXE_POSITION_LEFT,
+                                      spriteAxe.getPosition().y);
+
+                spritePlayer.setPosition(580, 720);
+
+                // update the branches
+                updateBranches(score);
+
+                // set the log flying
+                spriteLog.setPosition(810, 720);
+                logSpeedX = 5000;
+                logActive = true;
+            }
         }
 
         // Update the scene
