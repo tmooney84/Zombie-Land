@@ -44,8 +44,7 @@ int main()
     // Create the background
     sf::VertexArray background;
     // Load the texture for our background vertex array
-    sf::Texture textureBackground;
-    textureBackground.loadFromFile("graphics/background_sheet.png");
+    sf::Texture textureBackground = TextureHolder::GetTexture("graphics/background_sheet.png");
     // Prepare for horde of zombies
     int numZombies;
     int numZombiesAlive;
