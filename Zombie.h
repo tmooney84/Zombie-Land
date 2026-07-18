@@ -34,7 +34,7 @@ class Zombie
         // Spawn a new zombie
         void spawn(float startX, float startY, int type, int seed);
         // Return a rectangle that is the position in the world
-        sf::FloatRect getPositon();
+        sf::FloatRect getPosition();
         // Get a copy of the spirte to draw
         sf::Sprite getSprite();
         // Update the zombie each frame

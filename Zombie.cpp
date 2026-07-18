@@ -70,7 +70,7 @@ bool Zombie::isAlive()
     return m_Alive;
 }
 
-sf::FloatRect Zombie::getPositon()
+sf::FloatRect Zombie::getPosition()
 {
     return m_Sprite.getGlobalBounds();
 }
