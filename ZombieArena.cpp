@@ -3,6 +3,18 @@
 #include "ZombieArena.h"
 #include "TextureHolder.h"
 #include "Bullet.h"
+#include "Pickup.h"
+
+// FOR DEBUGGING ONLY
+#include <iostream>
+
+//TODO: -could add a small random amount of inaccuracy to each
+    // shot. This inaccuracy could perhaps be mitigated with an
+    // upgrade between waves
+
+    // -need to fix the bullets so that they display correctly
+    // -seems like something related to update() function as
+    // the left mouse click is working
 
 int main()
 {
@@ -22,9 +34,13 @@ int main()
         sf::VideoMode::getDesktopMode().width;
     resolution.y =
         sf::VideoMode::getDesktopMode().height;
-    sf::RenderWindow window(
-        sf::VideoMode(resolution.x, resolution.y),
-            "Zombie Arena", sf::Style::Fullscreen);
+
+    #ifdef DEBUG_MODE       //-DDEBUG_MODE to switch windows
+        sf::RenderWindow window(sf::VideoMode(1280, 720), "Zombie Arena (Debug Mode)");
+    #else
+        sf::RenderWindow window(sf::VideoMode(resolution.x, resolution.y),"Zombie Arena", sf::Style::Fullscreen);
+    #endif
+
     // Create a an SFML View for the main action
     sf::View mainView(sf::FloatRect(0, 0,
     resolution.x, resolution.y)); 
@@ -60,6 +76,17 @@ int main()
     int fireRate = 1;
     // When was the fire button last pressed?
     sf::Time lastPressed;
+
+    // Hide the mouse pointer and replace with crosshair
+    window.setMouseCursorVisible(true);
+    sf::Sprite spriteCrosshair;
+    sf::Texture textureCrosshair = TextureHolder::GetTexture("graphics/crosshair.png");
+    spriteCrosshair.setTexture(textureCrosshair);
+    spriteCrosshair.setOrigin(25, 25);
+
+    // Create a couple of pickups
+    Pickup healthPickup(1);
+    Pickup ammoPickup(2);
 
     // The main game loop
     while (window.isOpen())
@@ -162,9 +189,11 @@ int main()
             {
                 player.stopRight();
             }
+
             // Fire a bullet
             if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
             {
+
                 if(gameTimeTotal.asMilliseconds()
                     - lastPressed.asMilliseconds()
                     > 1000 / fireRate && bulletsInClip > 0)
@@ -182,8 +211,12 @@ int main()
                         }
                         lastPressed = gameTimeTotal;
                         bulletsInClip--;
+
+                        std::cout << "bullets[" << currentBullet << "] left: " << bullets[currentBullet].getPostion().left;
                     }
+            
             } // End fire a bullet
+        
         } // End WASD while playing
         // Handle the LEVELING up state
         if(state == State::LEVELING_UP)
@@ -226,6 +259,9 @@ int main()
                 int tileSize = createBackground(background, arena);
                 // Spawn the player in the middle of the arena
                 player.spawn(arena, resolution, tileSize);
+                // Configure the pick-ups
+                healthPickup.setArena(arena);
+                ammoPickup.setArena(arena);
                 // Create a horde of zombies
                 numZombies = 10;
                 // Delete teh previously allocated memory (if it exists)
@@ -258,6 +294,8 @@ int main()
             // based coordinates of mainView
             mouseWorldPosition = window.mapPixelToCoords(
                 sf::Mouse::getPosition(), mainView);
+            // Set the crosshair to the mouse world location
+            spriteCrosshair.setPosition(mouseWorldPosition);
             // Update the player
             player.update(dtAsSeconds, sf::Mouse::getPosition());
             // Make a note of the player's new position
@@ -282,6 +320,9 @@ int main()
                     bullets[i].update(dtAsSeconds);
                 }
             }
+            // Update the pickups
+            healthPickup.update(dtAsSeconds);
+            ammoPickup.update(dtAsSeconds);
         } // End updating the scene
 
         /*
@@ -303,6 +344,7 @@ int main()
             {
                 window.draw(zombies[i].getSprite());
             }
+
             // Draw the bullets
             for (int i = 0; i < BULLET_ARRAY_SIZE; i++)
             {
@@ -313,6 +355,20 @@ int main()
             }
             // Draw the player
             window.draw(player.getSprite());
+
+            //Draw the pick-ups, if currently spawned
+            if(ammoPickup.isSpawned())
+            {
+                window.draw(ammoPickup.getSprite());
+            }
+
+            if(healthPickup.isSpawned())
+            {
+                window.draw(healthPickup.getSprite());
+            }
+
+            // Draw the crosshair
+            window.draw(spriteCrosshair);
         }
         if (state == State::LEVELING_UP)
         {
