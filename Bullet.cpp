@@ -79,6 +79,3 @@ void Bullet::update(float elapsedTime)
         m_InFlight = false;
     }
 }
-
-
-
