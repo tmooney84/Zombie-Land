@@ -11,22 +11,13 @@
 // FOR DEBUGGING ONLY
 #include <iostream>
 
-// TODO: -could add a small random amount of inaccuracy to each
-//  shot. This inaccuracy could perhaps be mitigated with an
-//  upgrade between waves
-
-// -need to fix the bullets so that they display correctly
-// -seems like something related to update() function as
-// the left mouse click is working
-
-// -Need to help menu at pause for "Enter", "WSAD", "R" -> Reload, Left Mouse -> shoot
-
 // -Need to create a gamedata folder and a scores.txt file within it for saving high score
-
-// -Need to adjust menu sizing ... maybe make relational to the screen instead of absolute
 
 // BUGZZZ
 // !!! BUG 0: When shooting 1 bullet it seems that it is bullets[5]
+
+// NEED TO FIX "R" Reload so it will only reload when the the number in current clip is zero
+
 // why is it
 int main()
 {
@@ -341,23 +332,27 @@ int main()
                     // Reloading
                     if (event.key.code == sf::Keyboard::R)
                     {
-                        if (bulletsSpare >= clipSize)
+                        if (bulletsSpare >= clipSize && bulletsInClip == 0)
                         {
                             // Plenty of bullets. Reload.
                             bulletsInClip = clipSize;
                             bulletsSpare -= clipSize;
                             reload.play();
                         }
-                        else if (bulletsSpare > 0)
+                        else if (bulletsSpare > 0 && bulletsInClip == 0)
                         {
                             // Only few bullets left
                             bulletsInClip = bulletsSpare;
                             bulletsSpare = 0;
                             reload.play();
                         }
-                        else
+                        else if (bulletsInClip == 0)
                         {
                             reloadFailed.play();
+                        }
+                        else
+                        {
+                            // No sound
                         }
                     }
                 }
