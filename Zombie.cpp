@@ -34,7 +34,6 @@ void Zombie::spawn(float startX, float startY, int type, int seed)
     }
     // Modify the speed to make the zombie unique
     // Every zombie is unique. Create a speed modifier
-    srand((int)time(0) * seed);
     // Somewhere between 80 and 100
     float modifier = (rand() % MAX_VARIANCE + OFFSET);
     modifier /= 100; // Now equals between .7 and 1

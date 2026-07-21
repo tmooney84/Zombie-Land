@@ -53,7 +53,6 @@ int createBackground(sf::VertexArray &rVA, sf::IntRect arena)
             else
             {
                 // Use a random floor texture
-                srand((int)time(0) + h * w - h);
                 int mOrG = (rand() % TILE_TYPES);
                 int verticalOffset = mOrG * TILE_SIZE;
                 rVA[currentVertex + 0].texCoords =

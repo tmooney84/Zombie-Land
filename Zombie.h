@@ -7,7 +7,7 @@ class Zombie
     //speed of each type of zombie
     const float BLOATER_SPEED = 40;
     const float CHASER_SPEED = 80;
-    const float CRAWLER_SPEED = 20;
+    const float CRAWLER_SPEED = 30;
     // health of zombie
     const float BLOATER_HEALTH = 5;
     const float CHASER_HEALTH = 1;

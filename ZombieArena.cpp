@@ -16,11 +16,13 @@
 // BUGZZZ
 // !!! BUG 0: When shooting 1 bullet it seems that it is bullets[5]
 
-// NEED TO FIX "R" Reload so it will only reload when the the number in current clip is zero
 
 // why is it
 int main()
 {
+    // random seed generator
+    srand((int)time(0));
+
     // Here is the instance of TextureHolder
     TextureHolder holder;
 
@@ -77,6 +79,8 @@ int main()
     Bullet bullets[100];
     int currentBullet = 0;
     int bulletsSpare = 24;
+    // BulletsSpare Tracking for #A1
+    int prevBulletsInClip = -1;
     int bulletsInClip = 6;
     int clipSize = 6;
     float fireRate = 1;
@@ -128,9 +132,6 @@ int main()
         "S: Move Down\nA: Move Left\n"
         "D: Move Right\nR: Reload\nLeft Mouse Click: Fire");
 
-// -Need to help menu at pause for "Enter", "WSAD", "R" -> Reload, Left Mouse -> shoot
-
-
     sf::FloatRect pausedRect = pausedText.getLocalBounds();
     pausedText.setOrigin(pausedRect.left + pausedRect.width / 2.0f,
                         pausedRect.top + pausedRect.height / 2.0f);
@@ -167,33 +168,17 @@ int main()
     ammoText.setFont(font);
     ammoText.setCharacterSize(55);
     ammoText.setFillColor(sf::Color::White);
-// //    ammoText.setPosition(200, 980);
 
     sf::FloatRect ammoTextRect = ammoText.getLocalBounds();
     ammoText.setOrigin(ammoTextRect.left + ammoTextRect.width / 2.0f,
                         ammoTextRect.top + ammoTextRect.height / 2.0f);
     ammoText.setPosition(20, resolution.y - 200);
 
-
-    // Paused
-    // sf::Text pausedText;
-    // pausedText.setFont(font);
-    // pausedText.setCharacterSize(155);
-    // pausedText.setFillColor(Color::White);
-    // pausedText.setString("Press Enter \nto continue");
-
-    // sf::FloatRect pausedRect = pausedText.getLocalBounds();
-    // pausedText.setOrigin(pausedRect.left + pausedRect.width / 2.0f,
-    //                     pausedRect.top + pausedRect.height / 2.0f);
-    // pausedText.setPosition(resolution.x / 2.0f, resolution.y / 2.0f);
-
-
     // Score
     sf::Text scoreText;
     scoreText.setFont(font);
     scoreText.setCharacterSize(55);
     scoreText.setFillColor(sf::Color::White);
-    //scoreText.setPosition(20, 0);
 
     sf::FloatRect scoreTextRect = scoreText.getLocalBounds();
     scoreText.setOrigin(scoreTextRect.left + scoreTextRect.width / 2.0f,
@@ -420,7 +405,22 @@ int main()
                     }
                     lastPressed = gameTimeTotal;
                     shoot.play();
+                    std::cout << "BulletsInClipB4: " << bulletsInClip << std::endl;
+                    std::cout << "PreviousB4: " << prevBulletsInClip << std::endl;
                     bulletsInClip--;
+                    
+                    if(bulletsInClip == prevBulletsInClip)
+                        {
+                            //CHECK FOR WHAT HAPPENS AT 0 and incorporate
+                            std::cout << "Infinite ammo!!!\n";
+                        
+                        }
+
+                    prevBulletsInClip = bulletsInClip;
+                   // std::cout << "BulletsInClipAfter: " << bulletsInClip << std::endl;
+                   // std::cout << "Previous(after): " << bulletsInClip << std::endl;
+                    
+                    
                 }
             } // End fire a bullet
 

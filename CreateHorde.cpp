@@ -11,7 +11,6 @@ Zombie *createHorde(int numZombies, sf::IntRect arena)
     for (int i = 0; i < numZombies; i++)
     {
         // Which side should the zombie spawn
-        srand((int)time(0) * i);
         int side = (rand() % 4);
         float x, y;
         switch (side)
@@ -39,7 +38,6 @@ Zombie *createHorde(int numZombies, sf::IntRect arena)
         }
 
         // Bloater, crawler or runner
-        srand((int)time(0) * i * 2);
         int type = (rand() % 3);
         // Spawn the new zombie into the array
         zombies[i].spawn(x, y, type, i);
