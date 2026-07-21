@@ -5,7 +5,8 @@ class Player
 {
     private:
         const float START_SPEED = 200;
-        const float START_HEALTH = 100;
+        // START_HEALTH default now set at 150
+        const float START_HEALTH = 150;
         // Where is the player
         sf::Vector2f m_Position;
         // The sprite

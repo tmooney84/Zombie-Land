@@ -14,7 +14,7 @@ Player::Player()
     m_Sprite = sf::Sprite(TextureHolder::GetTexture("graphics/player.png"));
     // Set the origin of the sprite to the center,
     // for smooth rotation
-    m_Sprite.setOrigin(25, 25);
+    m_Sprite.setOrigin(24, 24);
 }
 
 void Player::spawn(sf::IntRect arena,

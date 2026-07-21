@@ -53,7 +53,7 @@ int main()
         sf::VideoMode::getDesktopMode().height;
     sf::RenderWindow window(
         sf::VideoMode(resolution.x, resolution.y),
-        "Zombie Arena", sf::Style::Fullscreen);
+        "Zombie Land", sf::Style::Fullscreen);
     // Create a an SFML View for the main action
     sf::View mainView(sf::FloatRect(0, 0,
                                     resolution.x, resolution.y));
@@ -112,6 +112,7 @@ int main()
     sf::Texture textureGameOver = TextureHolder::GetTexture("graphics/background.png");
     spriteGameOver.setTexture(textureGameOver);
     spriteGameOver.setPosition(0, 0);
+
     // Create a view for the HUD
     // !!! MAKE SURE THAT THE DYNAMIC VERSION WORKS CORRECTLY !!!
     // sf::View hudView(sf::FloatRect(0, 0, 1920, 1080));
@@ -122,15 +123,22 @@ int main()
         "graphics/ammo_icon.png");
     spriteAmmoIcon.setTexture(textureAmmoIcon);
     spriteAmmoIcon.setPosition(20, 980);
+    
     // Load the font
     sf::Font font;
     font.loadFromFile("fonts/zombiecontrol.ttf");
+
     // Paused
     sf::Text pausedText;
     pausedText.setFont(font);
-    pausedText.setCharacterSize(155);
+    pausedText.setCharacterSize(50);
     pausedText.setFillColor(Color::White);
-    pausedText.setString("Press Enter \nto continue");
+    pausedText.setString("Press Enter to continue\n\nW: Move Up\n"
+        "S: Move Down\nA: Move Left\n"
+        "D: Move Right\nR: Reload\nLeft Mouse Click: Fire");
+
+// -Need to help menu at pause for "Enter", "WSAD", "R" -> Reload, Left Mouse -> shoot
+
 
     sf::FloatRect pausedRect = pausedText.getLocalBounds();
     pausedText.setOrigin(pausedRect.left + pausedRect.width / 2.0f,
@@ -168,13 +176,38 @@ int main()
     ammoText.setFont(font);
     ammoText.setCharacterSize(55);
     ammoText.setFillColor(sf::Color::White);
-    ammoText.setPosition(200, 980);
+// //    ammoText.setPosition(200, 980);
+
+    sf::FloatRect ammoTextRect = ammoText.getLocalBounds();
+    ammoText.setOrigin(ammoTextRect.left + ammoTextRect.width / 2.0f,
+                        ammoTextRect.top + ammoTextRect.height / 2.0f);
+    ammoText.setPosition(20, resolution.y - 200);
+
+
+    // Paused
+    // sf::Text pausedText;
+    // pausedText.setFont(font);
+    // pausedText.setCharacterSize(155);
+    // pausedText.setFillColor(Color::White);
+    // pausedText.setString("Press Enter \nto continue");
+
+    // sf::FloatRect pausedRect = pausedText.getLocalBounds();
+    // pausedText.setOrigin(pausedRect.left + pausedRect.width / 2.0f,
+    //                     pausedRect.top + pausedRect.height / 2.0f);
+    // pausedText.setPosition(resolution.x / 2.0f, resolution.y / 2.0f);
+
+
     // Score
     sf::Text scoreText;
     scoreText.setFont(font);
     scoreText.setCharacterSize(55);
     scoreText.setFillColor(sf::Color::White);
-    scoreText.setPosition(20, 0);
+    //scoreText.setPosition(20, 0);
+
+    sf::FloatRect scoreTextRect = scoreText.getLocalBounds();
+    scoreText.setOrigin(scoreTextRect.left + scoreTextRect.width / 2.0f,
+                            scoreTextRect.top + scoreTextRect.height / 2.0f);
+    scoreText.setPosition(20,0);
 
     // Load the high score from text file
     std::ifstream inputFile("gamedata/scores.txt");
@@ -190,29 +223,34 @@ int main()
     hiScoreText.setFont(font);
     hiScoreText.setCharacterSize(55);
     hiScoreText.setFillColor(sf::Color::White);
-    hiScoreText.setPosition(1400, 0);
+    hiScoreText.setPosition(resolution.x - 300, 0);
     std::stringstream s;
     s << "Hi Score:" << hiScore;
     hiScoreText.setString(s.str());
+
+
     // Zombies remaining
     sf::Text zombiesRemainingText;
     zombiesRemainingText.setFont(font);
     zombiesRemainingText.setCharacterSize(55);
     zombiesRemainingText.setFillColor(Color::White);
-    zombiesRemainingText.setPosition(1500, 980);
+    zombiesRemainingText.setPosition(resolution.x - 300, resolution.y-300);
     zombiesRemainingText.setString("Zombies: 100");
+
+
     // Wave number
     int wave = 0;
     sf::Text waveNumberText;
     waveNumberText.setFont(font);
     waveNumberText.setCharacterSize(55);
     waveNumberText.setFillColor(sf::Color::White);
-    waveNumberText.setPosition(1250, 980);
+    waveNumberText.setPosition(resolution.x - 300, resolution.y - 200);
     waveNumberText.setString("Wave: 0");
+
     // Health bar
     sf::RectangleShape healthBar;
     healthBar.setFillColor(sf::Color::Red);
-    healthBar.setPosition(450, 980);
+    healthBar.setPosition(450, resolution.y - 100);
 
     // When did we last update the HUD?
     int framesSinceLastHUDUpdate = 0;

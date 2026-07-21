@@ -36,7 +36,7 @@ void Bullet::shoot(float startX, float startY,
         m_BulletDistanceY *= -1;
     }
 
-    // Set a max range of 1000 pixels
+    // Set a max range of pixels (ORIGINALLY 1000)
     float range = 3000;
     m_MinX = startX - range;
     m_MaxX = startX + range;
