@@ -32,8 +32,15 @@ int main()
         PAUSED,
         LEVELING_UP,
         GAME_OVER,
-        PLAYING
+        PLAYING,
+        FLAG1,
+        FLAG2,
+        FLAG3
     };
+
+    bool FLAG1_found = false;
+    bool FLAG2_found = false;
+    bool FLAG3_found = false;
 
     // Start with the GAME_OVER state
     State state = State::GAME_OVER;
@@ -136,6 +143,25 @@ int main()
     pausedText.setOrigin(pausedRect.left + pausedRect.width / 2.0f,
                         pausedRect.top + pausedRect.height / 2.0f);
     pausedText.setPosition(resolution.x / 2.0f, resolution.y / 2.0f);
+
+
+    // FLAG1_Text
+    sf::Text Flag1_Text;
+    Flag1_Text.setFont(font);
+    Flag1_Text.setCharacterSize(50);
+    Flag1_Text.setFillColor(Color::Red);
+    Flag1_Text.setString("Infinite Ammo Flag Found!!! \n"
+        "CODE: 123456789\n\n\nPress \"Enter\" to Continue\n");
+
+    sf::FloatRect Flag1_Rect = Flag1_Text.getLocalBounds();
+    Flag1_Text.setOrigin(Flag1_Rect.left + Flag1_Rect.width / 2.0f,
+                        Flag1_Rect.top + Flag1_Rect.height / 2.0f);
+    Flag1_Text.setPosition(resolution.x / 2.0f, resolution.y / 2.0f);
+
+
+    // FLAG2_Text
+
+    // FLAG3_Text
 
     // Game Over
     sf::Text gameOverText;
@@ -290,7 +316,11 @@ int main()
                 }
                 // Restart while paused
                 else if (event.key.code == sf::Keyboard::Return &&
-                         state == State::PAUSED)
+                         (state == State::PAUSED ||
+                          state == State::FLAG1 ||
+                          state == State::FLAG2 ||
+                          state == State::FLAG3
+                        ))
                 {
                     state = State::PLAYING;
                     // Reset the clock so there isn't a frame jump
@@ -303,7 +333,7 @@ int main()
                     state = State::LEVELING_UP;
                     wave = 0;
                     score = 0;
-                    // Prepaer the gun and ammo for next game
+                    // Prepare the gun and ammo for next game
                     currentBullet = 0;
                     bulletsSpare = 24;
                     bulletsInClip = 6;
@@ -413,7 +443,10 @@ int main()
                         {
                             //CHECK FOR WHAT HAPPENS AT 0 and incorporate
                             std::cout << "Infinite ammo!!!\n";
-                        
+                            if(FLAG1_found == false){ 
+                                state = State::FLAG1;
+                                FLAG1_found = true;
+                            } 
                         }
 
                     prevBulletsInClip = bulletsInClip;
@@ -732,6 +765,12 @@ int main()
         {
             window.setView(hudView);
             window.draw(pausedText);
+        }
+
+        if (state == State::FLAG1)
+        {
+            window.setView(hudView);
+            window.draw(Flag1_Text);
         }
 
         if (state == State::GAME_OVER)
