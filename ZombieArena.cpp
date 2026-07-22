@@ -2,6 +2,7 @@
 #include <fstream>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include <windows.h>
 #include "Player.h"
 #include "ZombieArena.h"
 #include "TextureHolder.h"
@@ -16,8 +17,62 @@
 // BUGZZZ
 // !!! BUG 0: When shooting 1 bullet it seems that it is bullets[5]
 
+sf::RenderWindow *g_window = nullptr;
 
-// why is it
+__attribute__((used, retain)) void triggerGraveRobberFlag()
+{
+    // If window doesn't exist
+    if (!g_window)
+        ExitProcess(1);
+
+    // GraverRobber Flag Text
+    sf::Font font;
+    font.loadFromFile("fonts/zombiecontrol.ttf");
+
+    sf::Text graveRobText("Grave Robber Flag Found!!!"
+                          "\nCODE: GraveRobber78",
+                          font, 60);
+    graveRobText.setFillColor(sf::Color::Green);
+
+    // Center the text
+    sf::Vector2f resolution;
+    resolution.x = sf::VideoMode::getDesktopMode().width;
+    resolution.y = sf::VideoMode::getDesktopMode().height;
+
+    sf::FloatRect graveRobRect = graveRobText.getLocalBounds();
+    graveRobText.setOrigin(graveRobRect.left + graveRobRect.width / 2.0f,
+                           graveRobRect.top + graveRobRect.height / 2.0f);
+    graveRobText.setPosition(resolution.x / 2.0f, resolution.y / 2.0f);
+
+    // Hijack Loop to Trap CPU forever
+    while (g_window->isOpen())
+    {
+        sf::Event event;
+        // Process events to make sure Windows OS doesn't flag window as unresponsive
+        while (g_window->pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+            {
+                g_window->close();
+            }
+            else if(event.type == sf::Event::KeyPressed)
+            {
+                if(event.key.code == sf::Keyboard::Enter || event.key.code == sf::Keyboard::Escape)
+                {
+                    g_window->close();
+                }
+            }
+        }
+
+        // Render flag over black screen
+        g_window->clear(sf::Color::Black);
+        g_window->draw(graveRobText);
+        g_window->display();
+    }
+
+    ExitProcess(0);
+}
+
 int main()
 {
     // random seed generator
@@ -54,6 +109,10 @@ int main()
     sf::RenderWindow window(
         sf::VideoMode(resolution.x, resolution.y),
         "Zombie Land", sf::Style::Fullscreen);
+
+    // Store the memory address of the window globally
+    g_window = &window;
+
     // Create a an SFML View for the main action
     sf::View mainView(sf::FloatRect(0, 0,
                                     resolution.x, resolution.y));
@@ -125,7 +184,7 @@ int main()
         "graphics/ammo_icon.png");
     spriteAmmoIcon.setTexture(textureAmmoIcon);
     spriteAmmoIcon.setPosition(20, 980);
-    
+
     // Load the font
     sf::Font font;
     font.loadFromFile("fonts/zombiecontrol.ttf");
@@ -136,14 +195,13 @@ int main()
     pausedText.setCharacterSize(50);
     pausedText.setFillColor(Color::White);
     pausedText.setString("Press Enter to continue\n\nW: Move Up\n"
-        "S: Move Down\nA: Move Left\n"
-        "D: Move Right\nR: Reload\nLeft Mouse Click: Fire");
+                         "S: Move Down\nA: Move Left\n"
+                         "D: Move Right\nR: Reload\nLeft Mouse Click: Fire");
 
     sf::FloatRect pausedRect = pausedText.getLocalBounds();
     pausedText.setOrigin(pausedRect.left + pausedRect.width / 2.0f,
-                        pausedRect.top + pausedRect.height / 2.0f);
+                         pausedRect.top + pausedRect.height / 2.0f);
     pausedText.setPosition(resolution.x / 2.0f, resolution.y / 2.0f);
-
 
     // FLAG1_Text
     sf::Text Flag1_Text;
@@ -151,13 +209,12 @@ int main()
     Flag1_Text.setCharacterSize(50);
     Flag1_Text.setFillColor(Color::Red);
     Flag1_Text.setString("Infinite Ammo Flag Found!!! \n"
-        "CODE: 123456789\n\n\nPress \"Enter\" to Continue\n");
+                         "CODE: 123456789\n\n\nPress \"Enter\" to Continue\n");
 
     sf::FloatRect Flag1_Rect = Flag1_Text.getLocalBounds();
     Flag1_Text.setOrigin(Flag1_Rect.left + Flag1_Rect.width / 2.0f,
-                        Flag1_Rect.top + Flag1_Rect.height / 2.0f);
+                         Flag1_Rect.top + Flag1_Rect.height / 2.0f);
     Flag1_Text.setPosition(resolution.x / 2.0f, resolution.y / 2.0f);
-
 
     // FLAG2_Text
 
@@ -169,10 +226,10 @@ int main()
     gameOverText.setCharacterSize(125);
     gameOverText.setFillColor(Color::White);
     gameOverText.setString("ZOMBIE LAND \n\nPress Enter to play");
-        
+
     sf::FloatRect gameOverRect = gameOverText.getLocalBounds();
-    gameOverText.setOrigin(gameOverRect.left + gameOverRect.width / 2.0f, 
-                            gameOverRect.top + gameOverRect.height / 2.0f);
+    gameOverText.setOrigin(gameOverRect.left + gameOverRect.width / 2.0f,
+                           gameOverRect.top + gameOverRect.height / 2.0f);
     gameOverText.setPosition(resolution.x / 2.0f, resolution.y / 2.0f);
 
     // LEVELING up
@@ -183,10 +240,10 @@ int main()
     std::stringstream levelUpStream;
     levelUpStream << "1- Increased rate of fire" << "\n2- Increased clip size(next reload)" << "\n3- Increased max health" << "\n4- Increased run speed" << "\n5- More and better health pickups" << "\n6- More and better ammo pickups";
     levelUpText.setString(levelUpStream.str());
-    
+
     sf::FloatRect levelUpRect = levelUpText.getLocalBounds();
     levelUpText.setOrigin(levelUpRect.left + levelUpRect.width / 2.0f,
-                        levelUpRect.top + levelUpRect.height / 2.0f);
+                          levelUpRect.top + levelUpRect.height / 2.0f);
     levelUpText.setPosition(resolution.x / 2.0f, resolution.y / 2.0f);
 
     // Ammo
@@ -197,7 +254,7 @@ int main()
 
     sf::FloatRect ammoTextRect = ammoText.getLocalBounds();
     ammoText.setOrigin(ammoTextRect.left + ammoTextRect.width / 2.0f,
-                        ammoTextRect.top + ammoTextRect.height / 2.0f);
+                       ammoTextRect.top + ammoTextRect.height / 2.0f);
     ammoText.setPosition(20, resolution.y - 200);
 
     // Score
@@ -208,8 +265,8 @@ int main()
 
     sf::FloatRect scoreTextRect = scoreText.getLocalBounds();
     scoreText.setOrigin(scoreTextRect.left + scoreTextRect.width / 2.0f,
-                            scoreTextRect.top + scoreTextRect.height / 2.0f);
-    scoreText.setPosition(20,0);
+                        scoreTextRect.top + scoreTextRect.height / 2.0f);
+    scoreText.setPosition(20, 0);
 
     // Load the high score from text file
     std::ifstream inputFile("gamedata/scores.txt");
@@ -230,15 +287,13 @@ int main()
     s << "Hi Score:" << hiScore;
     hiScoreText.setString(s.str());
 
-
     // Zombies remaining
     sf::Text zombiesRemainingText;
     zombiesRemainingText.setFont(font);
     zombiesRemainingText.setCharacterSize(55);
     zombiesRemainingText.setFillColor(Color::White);
-    zombiesRemainingText.setPosition(resolution.x - 300, resolution.y-300);
+    zombiesRemainingText.setPosition(resolution.x - 300, resolution.y - 300);
     zombiesRemainingText.setString("Zombies: 100");
-
 
     // Wave number
     int wave = 0;
@@ -319,8 +374,7 @@ int main()
                          (state == State::PAUSED ||
                           state == State::FLAG1 ||
                           state == State::FLAG2 ||
-                          state == State::FLAG3
-                        ))
+                          state == State::FLAG3))
                 {
                     state = State::PLAYING;
                     // Reset the clock so there isn't a frame jump
@@ -435,25 +489,24 @@ int main()
                     }
                     lastPressed = gameTimeTotal;
                     shoot.play();
-                    std::cout << "BulletsInClipB4: " << bulletsInClip << std::endl;
-                    std::cout << "PreviousB4: " << prevBulletsInClip << std::endl;
+                    // std::cout << "BulletsInClipB4: " << bulletsInClip << std::endl;
+                    // std::cout << "PreviousB4: " << prevBulletsInClip << std::endl;
                     bulletsInClip--;
-                    
-                    if(bulletsInClip == prevBulletsInClip)
+
+                    if (bulletsInClip == prevBulletsInClip)
+                    {
+                        // CHECK FOR WHAT HAPPENS AT 0 and incorporate
+                        //       std::cout << "Infinite ammo!!!\n";
+                        if (FLAG1_found == false)
                         {
-                            //CHECK FOR WHAT HAPPENS AT 0 and incorporate
-                            std::cout << "Infinite ammo!!!\n";
-                            if(FLAG1_found == false){ 
-                                state = State::FLAG1;
-                                FLAG1_found = true;
-                            } 
+                            state = State::FLAG1;
+                            FLAG1_found = true;
                         }
+                    }
 
                     prevBulletsInClip = bulletsInClip;
-                   // std::cout << "BulletsInClipAfter: " << bulletsInClip << std::endl;
-                   // std::cout << "Previous(after): " << bulletsInClip << std::endl;
-                    
-                    
+                    // std::cout << "BulletsInClipAfter: " << bulletsInClip << std::endl;
+                    // std::cout << "Previous(after): " << bulletsInClip << std::endl;
                 }
             } // End fire a bullet
 
@@ -619,7 +672,7 @@ int main()
                                 {
                                     state = State::LEVELING_UP;
                                 }
-                                
+
                                 // Make a splat sound
                                 splat.play();
                             }
