@@ -29,9 +29,39 @@ __attribute__((used, retain)) void triggerGraveRobberFlag()
     sf::Font font;
     font.loadFromFile("fonts/zombiecontrol.ttf");
 
-    sf::Text graveRobText("Grave Robber Flag Found!!!"
-                          "\nCODE: GraveRobber78",
-                          font, 60);
+    // sf::Text graveRobText("Grave Robber Flag Found!!!"
+    //                       "\nCODE: GraveRobber78",
+    //                       font, 60);
+
+    // "Grave Robber Flag Found...\nCODE: GraveRobber78" XORed with 0x5A
+    // Encrypted bytes for: "Grave Robber Flag Found!!!\nCODE: GraveRobber78"
+    // Using XOR key: 0x5A
+    unsigned char ciphertext[] = {
+        0x1D, 0x28, 0x3B, 0x2C, 0x3F, 0x7A,
+        0x08, 0x35, 0x38, 0x38, 0x3F, 0x28,
+        0x7A,
+        0x1C, 0x36, 0x3B, 0x3D,
+        0x7A,
+        0x1C, 0x35, 0x2F, 0x34, 0x3E,
+        0x7B, 0x7B, 0x7B,
+        0x50,
+        0x19, 0x15, 0x1E, 0x1F, 0x60,
+        0x7A,
+        0x1D, 0x28, 0x3B, 0x2C, 0x3F,
+        0x08, 0x35, 0x38, 0x38, 0x3F, 0x28,
+        0x6D, 0x62};
+
+    char key = 0x5A;
+    std::string decryptedText = "";
+
+    // Decrypt the bytes dynamically into a clean string on the stack
+    for (size_t i = 0; i < sizeof(ciphertext); i++)
+    {
+        decryptedText += (ciphertext[i] ^ key);
+    }
+
+    sf::Text graveRobText(decryptedText, font, 60);
+
     graveRobText.setFillColor(sf::Color::Green);
 
     // Center the text
@@ -55,9 +85,9 @@ __attribute__((used, retain)) void triggerGraveRobberFlag()
             {
                 g_window->close();
             }
-            else if(event.type == sf::Event::KeyPressed)
+            else if (event.type == sf::Event::KeyPressed)
             {
-                if(event.key.code == sf::Keyboard::Enter || event.key.code == sf::Keyboard::Escape)
+                if (event.key.code == sf::Keyboard::Enter || event.key.code == sf::Keyboard::Escape)
                 {
                     g_window->close();
                 }
