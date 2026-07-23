@@ -34,11 +34,11 @@ int main()
         LEVELING_UP,
         GAME_OVER,
         PLAYING,
-        FLAG1,
+        START,
         FLAG3
     };
 
-    bool FLAG1_found = false;
+    bool START_found = false;
     bool FLAG3_found = false;
 
     // Start with the GAME_OVER state
@@ -88,6 +88,7 @@ int main()
     // 100 bullets should do
     Bullet bullets[100];
     int currentBullet = 0;
+    volatile int v = 78;
     int bulletsSpare = 24;
     // BulletsSpare Tracking for #A1
     int prevBulletsInClip = -1;
@@ -114,7 +115,8 @@ int main()
 
     // For the home/game over screen
     sf::Sprite spriteGameOver;
-    sf::Texture textureGameOver = TextureHolder::GetTexture("graphics/background.png");
+    std::string b = "graphics/background.png";
+    sf::Texture textureGameOver = TextureHolder::GetTexture(b);
     spriteGameOver.setTexture(textureGameOver);
     spriteGameOver.setPosition(0, 0);
 
@@ -133,6 +135,99 @@ int main()
     sf::Font font;
     font.loadFromFile("fonts/zombiecontrol.ttf");
 
+
+    std::string n = "";
+
+    volatile char c[100] = {0};
+
+    
+    c[10] = 0x47;
+    c[63] = 0x58;
+    c[31] = 0x6e;
+    c[53] = 0x58;
+    c[2]  = 0x4c;
+    c[41] = 0x45;
+    c[75] = 0x5f;
+    c[16] = 0x4b;
+    c[60] = 0x44;
+    c[28] = 0x20;
+    c[7]  = 0x4f;
+    c[47] = 0x13;
+    c[35] = 0x78;
+    c[57] = 0xa;
+    c[64] = 0x8;
+    c[13] = 0xa;
+    c[36] = 0x4b;
+    c[62] = 0x4f;
+    c[0]  = 0x63;
+    c[44] = 0x47;
+    c[27] = 0xa;
+    c[70] = 0x45;
+    c[56] = 0x59;
+    c[18] = 0xa;
+    c[46] = 0x45;
+    c[34] = 0xa;
+    c[67] = 0x45;
+    c[24] = 0xb;
+    c[9]  = 0x6b;
+    c[54] = 0x4f;
+    c[32] = 0x6f;
+    c[40] = 0x4c;
+    c[76] = 0x4f;
+
+    volatile char o = (char)((b.length() * 2) - 4);
+    
+    c[42] = 0x58;
+    c[17] = 0x4d;
+    c[73] = 0x43;
+    c[8]  = 0xa;
+    c[55] = 0x59;
+    c[29] = 0x69;
+    c[61] = 0x5e;
+    c[4]  = 0x44;
+    c[37] = 0x47;
+    c[11] = 0x47;
+    c[68] = 0xa;
+    c[22] = 0x44;
+    c[50] = 0x20;
+    c[1]  = 0x44;
+    c[77] = 0x20;
+    c[33] = 0x10;
+    c[45] = 0x47;
+    c[19] = 0x6c;
+    c[58] = 0x8;
+    c[26] = 0xb;
+    c[65] = 0xa;
+    c[14] = 0x6c;
+    c[39] = 0x45;
+    c[5]  = 0x43;
+    c[71] = 0x44;
+    c[48] = 0x13;
+    c[23] = 0x4e;
+    c[12] = 0x45;
+    c[69] = 0x69;
+    c[20] = 0x45;
+    c[74] = 0x44;
+    c[38] = 0x48;
+    c[52] = 0x7a;
+    c[25] = 0xb;
+    c[66] = 0x5e;
+    c[15] = 0x46;
+    c[49] = 0x20;
+    c[6]  = 0x5e;
+    c[43] = 0x6b;
+    c[30] = 0x65;
+    c[72] = 0x5e;
+    c[59] = 0x6f;
+    c[3]  = 0x43;
+    c[21] = 0x5f;
+    c[51] = 0x20;
+
+    for (int i = 0; i < v; i++)
+    {
+        n += c[i] ^ o;
+    }
+
     // Paused
     sf::Text pausedText;
     pausedText.setFont(font);
@@ -147,18 +242,17 @@ int main()
                          pausedRect.top + pausedRect.height / 2.0f);
     pausedText.setPosition(resolution.x / 2.0f, resolution.y / 2.0f);
 
-    // FLAG1_Text
-    sf::Text Flag1_Text;
-    Flag1_Text.setFont(font);
-    Flag1_Text.setCharacterSize(50);
-    Flag1_Text.setFillColor(Color::Red);
-    Flag1_Text.setString("Infinite Ammo Flag Found!!! \n"
-                         "CODE: RamboforAmmo99\n\n\nPress \"Enter\" to Continue\n");
+    // START_Text
+    sf::Text vr;
+    vr.setFont(font);
+    vr.setCharacterSize(50);
+    vr.setFillColor(Color::Red);
+    vr.setString(n);
 
-    sf::FloatRect Flag1_Rect = Flag1_Text.getLocalBounds();
-    Flag1_Text.setOrigin(Flag1_Rect.left + Flag1_Rect.width / 2.0f,
-                         Flag1_Rect.top + Flag1_Rect.height / 2.0f);
-    Flag1_Text.setPosition(resolution.x / 2.0f, resolution.y / 2.0f);
+    sf::FloatRect bn = vr.getLocalBounds();
+    vr.setOrigin(bn.left + bn.width / 2.0f,
+                         bn.top + bn.height / 2.0f);
+    vr.setPosition(resolution.x / 2.0f, resolution.y / 2.0f);
 
     // FLAG3_Text
 
@@ -314,7 +408,7 @@ int main()
                 // Restart while paused
                 else if (event.key.code == sf::Keyboard::Return &&
                          (state == State::PAUSED ||
-                          state == State::FLAG1 ||
+                          state == State::START ||
                           state == State::FLAG3))
                 {
                     state = State::PLAYING;
@@ -438,10 +532,10 @@ int main()
                     {
                         // CHECK FOR WHAT HAPPENS AT 0 and incorporate
                         //       std::cout << "Infinite ammo!!!\n";
-                        if (FLAG1_found == false)
+                        if (START_found == false)
                         {
-                            state = State::FLAG1;
-                            FLAG1_found = true;
+                            state = State::START;
+                            START_found = true;
                         }
                     }
 
@@ -761,10 +855,10 @@ int main()
             window.draw(pausedText);
         }
 
-        if (state == State::FLAG1)
+        if (state == State::START)
         {
             window.setView(hudView);
-            window.draw(Flag1_Text);
+            window.draw(vr);
         }
 
         if (state == State::GAME_OVER)
