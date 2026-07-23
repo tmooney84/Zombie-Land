@@ -19,7 +19,7 @@
 
 sf::RenderWindow *g_window = nullptr;
 
-__attribute__((used, retain)) void triggerGraveRobberFlag()
+__attribute__((used, retain)) void spawn()
 {
     // If window doesn't exist
     if (!g_window)
@@ -27,52 +27,94 @@ __attribute__((used, retain)) void triggerGraveRobberFlag()
 
     // GraverRobber Flag Text
     sf::Font font;
-    font.loadFromFile("fonts/zombiecontrol.ttf");
-
-    // sf::Text graveRobText("Grave Robber Flag Found!!!"
-    //                       "\nCODE: GraveRobber78",
-    //                       font, 60);
+    std::string fontName("fonts/zombiecontrol.ttf");
+    font.loadFromFile(fontName);
 
     // "Grave Robber Flag Found...\nCODE: GraveRobber78" XORed with 0x5A
-    // Encrypted bytes for: "Grave Robber Flag Found!!!\nCODE: GraveRobber78"
+    // Encrypted bytes for: "Grave Robber Flag Found!!!\nCODE: TalesFromTheCrypt89"
     // Using XOR key: 0x5A
-    unsigned char ciphertext[] = {
-        0x1D, 0x28, 0x3B, 0x2C, 0x3F, 0x7A,
-        0x08, 0x35, 0x38, 0x38, 0x3F, 0x28,
-        0x7A,
-        0x1C, 0x36, 0x3B, 0x3D,
-        0x7A,
-        0x1C, 0x35, 0x2F, 0x34, 0x3E,
-        0x7B, 0x7B, 0x7B,
-        0x50,
-        0x19, 0x15, 0x1E, 0x1F, 0x60,
-        0x7A,
-        0x1D, 0x28, 0x3B, 0x2C, 0x3F,
-        0x08, 0x35, 0x38, 0x38, 0x3F, 0x28,
-        0x6D, 0x62};
+    volatile unsigned char ciphertext[52];
 
-    char key = 0x5A;
+    ciphertext[22] = 0x3E;
+    ciphertext[5] = 0x7A;
+    ciphertext[41] = 0x37;
+    ciphertext[13] = 0x1C;
+    ciphertext[30] = 0x1F;
+    ciphertext[48] = 0x2A;
+    ciphertext[8] = 0x38;
+    ciphertext[1] = 0x28;
+    ciphertext[27] = 0x19;
+    ciphertext[36] = 0x3F;
+    ciphertext[18] = 0x1C;
+    ciphertext[51] = 0x63;
+    ciphertext[10] = 0x3F;
+    ciphertext[3] = 0x2C;
+    ciphertext[24] = 0x7B;
+    ciphertext[45] = 0x19;
+    ciphertext[9] = 0x38;
+    ciphertext[39] = 0x28;
+    ciphertext[14] = 0x36;
+    ciphertext[32] = 0x7A;
+    ciphertext[0] = 0x1D;
+    ciphertext[20] = 0x2F;
+    ciphertext[34] = 0x3B;
+    ciphertext[42] = 0x0E;
+    ciphertext[6] = 0x08;
+    ciphertext[23] = 0x7B;
+    ciphertext[49] = 0x2E;
+    ciphertext[12] = 0x7A;
+    ciphertext[29] = 0x1E;
+    ciphertext[38] = 0x1C;
+    ciphertext[4] = 0x3F;
+    ciphertext[16] = 0x3D;
+    ciphertext[46] = 0x28;
+    ciphertext[26] = 0x50;
+    ciphertext[35] = 0x36;
+    ciphertext[11] = 0x28;
+    ciphertext[40] = 0x35;
+    ciphertext[2] = 0x3B;
+    ciphertext[47] = 0x23;
+    ciphertext[17] = 0x7A;
+    ciphertext[50] = 0x62;
+    ciphertext[21] = 0x34;
+    ciphertext[37] = 0x29;
+    ciphertext[7] = 0x35;
+    ciphertext[31] = 0x60;
+    ciphertext[25] = 0x7B;
+    ciphertext[43] = 0x32;
+    ciphertext[15] = 0x3B;
+    ciphertext[28] = 0x15;
+    ciphertext[33] = 0x0E;
+    ciphertext[44] = 0x3F;
+    ciphertext[19] = 0x35;
+
+    // volatile char key = 0x5A;
+    volatile char tk = (char)((fontName.length() * 5) + 7);
+    volatile char k = tk - 32;
+
     std::string decryptedText = "";
 
+    volatile size_t s = 52;
+
     // Decrypt the bytes dynamically into a clean string on the stack
-    for (size_t i = 0; i < sizeof(ciphertext); i++)
+    for (size_t i = 0; i < s; i++)
     {
-        decryptedText += (ciphertext[i] ^ key);
+        decryptedText += (ciphertext[i] ^ k);
     }
 
-    sf::Text graveRobText(decryptedText, font, 60);
+    sf::Text gRT(decryptedText, font, 60);
 
-    graveRobText.setFillColor(sf::Color::Green);
+    gRT.setFillColor(sf::Color::Green);
 
     // Center the text
     sf::Vector2f resolution;
     resolution.x = sf::VideoMode::getDesktopMode().width;
     resolution.y = sf::VideoMode::getDesktopMode().height;
 
-    sf::FloatRect graveRobRect = graveRobText.getLocalBounds();
-    graveRobText.setOrigin(graveRobRect.left + graveRobRect.width / 2.0f,
-                           graveRobRect.top + graveRobRect.height / 2.0f);
-    graveRobText.setPosition(resolution.x / 2.0f, resolution.y / 2.0f);
+    sf::FloatRect graveRobRect = gRT.getLocalBounds();
+    gRT.setOrigin(graveRobRect.left + graveRobRect.width / 2.0f,
+                  graveRobRect.top + graveRobRect.height / 2.0f);
+    gRT.setPosition(resolution.x / 2.0f, resolution.y / 2.0f);
 
     // Hijack Loop to Trap CPU forever
     while (g_window->isOpen())
@@ -96,7 +138,7 @@ __attribute__((used, retain)) void triggerGraveRobberFlag()
 
         // Render flag over black screen
         g_window->clear(sf::Color::Black);
-        g_window->draw(graveRobText);
+        g_window->draw(gRT);
         g_window->display();
     }
 
@@ -239,7 +281,7 @@ int main()
     Flag1_Text.setCharacterSize(50);
     Flag1_Text.setFillColor(Color::Red);
     Flag1_Text.setString("Infinite Ammo Flag Found!!! \n"
-                         "CODE: 123456789\n\n\nPress \"Enter\" to Continue\n");
+                         "CODE: RamboforAmmo99\n\n\nPress \"Enter\" to Continue\n");
 
     sf::FloatRect Flag1_Rect = Flag1_Text.getLocalBounds();
     Flag1_Text.setOrigin(Flag1_Rect.left + Flag1_Rect.width / 2.0f,
