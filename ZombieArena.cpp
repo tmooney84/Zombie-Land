@@ -35,12 +35,10 @@ int main()
         GAME_OVER,
         PLAYING,
         FLAG1,
-        FLAG2,
         FLAG3
     };
 
     bool FLAG1_found = false;
-    bool FLAG2_found = false;
     bool FLAG3_found = false;
 
     // Start with the GAME_OVER state
@@ -161,8 +159,6 @@ int main()
     Flag1_Text.setOrigin(Flag1_Rect.left + Flag1_Rect.width / 2.0f,
                          Flag1_Rect.top + Flag1_Rect.height / 2.0f);
     Flag1_Text.setPosition(resolution.x / 2.0f, resolution.y / 2.0f);
-
-    // FLAG2_Text
 
     // FLAG3_Text
 
@@ -319,7 +315,6 @@ int main()
                 else if (event.key.code == sf::Keyboard::Return &&
                          (state == State::PAUSED ||
                           state == State::FLAG1 ||
-                          state == State::FLAG2 ||
                           state == State::FLAG3))
                 {
                     state = State::PLAYING;
