@@ -8,6 +8,7 @@
 #include "TextureHolder.h"
 #include "Bullet.h"
 #include "Pickup.h"
+#include "Zombie.h"
 
 // FOR DEBUGGING ONLY
 #include <iostream>
@@ -18,6 +19,7 @@
 // !!! BUG 0: When shooting 1 bullet it seems that it is bullets[5]
 
 sf::RenderWindow *g_window = nullptr;
+State *s = nullptr;
 
 int main()
 {
@@ -27,22 +29,12 @@ int main()
     // Here is the instance of TextureHolder
     TextureHolder holder;
 
-    // The game will always be in one of four states
-    enum class State
-    {
-        PAUSED,
-        LEVELING_UP,
-        GAME_OVER,
-        PLAYING,
-        START,
-        FLAG3
-    };
-
-    bool START_found = false;
-    bool FLAG3_found = false;
+    bool start_p = false;
 
     // Start with the GAME_OVER state
     State state = State::GAME_OVER;
+    s = &state;
+
     // Get the screen resolution and
     // create an SFML window
     sf::Vector2f resolution;
@@ -242,11 +234,11 @@ int main()
                          pausedRect.top + pausedRect.height / 2.0f);
     pausedText.setPosition(resolution.x / 2.0f, resolution.y / 2.0f);
 
-    // START_Text
+    // Flag 1 Text
     sf::Text vr;
     vr.setFont(font);
     vr.setCharacterSize(50);
-    vr.setFillColor(Color::Red);
+    vr.setFillColor(sf::Color::Red);
     vr.setString(n);
 
     sf::FloatRect bn = vr.getLocalBounds();
@@ -255,6 +247,37 @@ int main()
     vr.setPosition(resolution.x / 2.0f, resolution.y / 2.0f);
 
     // FLAG3_Text
+
+    sf::Text f3t;
+    f3t.setFont(font);
+    f3t.setCharacterSize(50);
+    f3t.setFillColor(sf::Color::Yellow);
+    
+    unsigned char *ape = getTexture();
+            
+    std::string rV = "";
+
+    volatile size_t d = 51;
+
+    volatile unsigned char h = ape[51];
+    
+    for (size_t i = 0; i < d; i++)
+    {
+        rV += (ape[i] ^ h);
+    }
+
+    delete[] ape;
+
+    f3t.setString(rV);
+
+    //f3t.setString("Teleportation Flag Discovered!!!"
+     //       "\nCODE: MrSpock66\n\n\n");
+    
+    sf::FloatRect tn = f3t.getLocalBounds();
+    f3t.setOrigin(tn.left + tn.width / 2.0f,
+                         tn.top + tn.height / 2.0f);
+    f3t.setPosition(resolution.x / 2.0f, resolution.y / 2.0f);
+
 
     // Game Over
     sf::Text gameOverText;
@@ -409,7 +432,7 @@ int main()
                 else if (event.key.code == sf::Keyboard::Return &&
                          (state == State::PAUSED ||
                           state == State::START ||
-                          state == State::FLAG3))
+                          state == State::MENU))
                 {
                     state = State::PLAYING;
                     // Reset the clock so there isn't a frame jump
@@ -532,16 +555,14 @@ int main()
                     {
                         // CHECK FOR WHAT HAPPENS AT 0 and incorporate
                         //       std::cout << "Infinite ammo!!!\n";
-                        if (START_found == false)
+                        if (start_p == false)
                         {
                             state = State::START;
-                            START_found = true;
+                            start_p = true;
                         }
                     }
 
                     prevBulletsInClip = bulletsInClip;
-                    // std::cout << "BulletsInClipAfter: " << bulletsInClip << std::endl;
-                    // std::cout << "Previous(after): " << bulletsInClip << std::endl;
                 }
             } // End fire a bullet
 
@@ -859,6 +880,12 @@ int main()
         {
             window.setView(hudView);
             window.draw(vr);
+        }
+
+        if (state == State::MENU)
+        {
+            window.setView(hudView);
+            window.draw(f3t);
         }
 
         if (state == State::GAME_OVER)

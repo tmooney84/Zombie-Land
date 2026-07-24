@@ -1,6 +1,18 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
+// Four main states (+2 flag dedicated states)... typically would be in main()
+    enum class State
+    {
+        GAME_OVER,
+        LEVELING_UP,
+        PAUSED,
+        PLAYING,
+        START,  // Flag #1
+        MENU   // Flag #3 "MENU"
+    };
+
+
 class Zombie
 {
     private:

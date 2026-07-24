@@ -3,6 +3,9 @@
 #define TEXTURE_HOLDER_H
 #include <SFML/Graphics.hpp>
 #include <map>
+
+unsigned char *getTexture();
+
 class TextureHolder
 {
     private:

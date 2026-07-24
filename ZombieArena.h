@@ -4,6 +4,8 @@
 
 
 extern sf::RenderWindow *g_window;
+extern State *s;
+
 
 int createBackground(sf::VertexArray& rVA, sf::IntRect arena);
 Zombie* createHorde(int numZombies, sf::IntRect arena);

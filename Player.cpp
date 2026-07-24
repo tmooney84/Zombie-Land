@@ -1,6 +1,13 @@
 #include "player.h"
 #include <cmath>
 #include "TextureHolder.h"
+#include "ZombieArena.h"
+#include "Zombie.h"
+
+extern State *s;
+extern sf::FloatRect teleportZone;
+
+bool playerSet = false;
 
 Player::Player()
     : m_Speed(START_SPEED),
@@ -10,188 +17,201 @@ Player::Player()
       m_Sprite()
 {
     // Associate a texture with the sprite
-    // !!Watch this space!!
     m_Sprite = sf::Sprite(TextureHolder::GetTexture("graphics/player.png"));
-    // Set the origin of the sprite to the center,
-    // for smooth rotation
+    // center of sprite for smooth rotation
     m_Sprite.setOrigin(24, 24);
 }
 
 void Player::spawn(sf::IntRect arena,
-        sf::Vector2f resolution,
-        int tileSize)
-        {
-            // Place the player in the middle of the arena
-            m_Position.x = arena.width / 2;
-            m_Position.y = arena.height / 2;
-            // Copy the details of the arena
-            // to the palyer's m_Arena
-            m_Arena.left = arena.left;
-            m_Arena.width = arena.width;
-            m_Arena.top = arena.top;
-            m_Arena.height = arena.height;
-            // Remember how big the tiles are in this arena
-            m_TileSize = tileSize;
-            // Store the resolution for future use
-            m_Resolution.x = resolution.x;
-            m_Resolution.y = resolution.y;
-        }
+                   sf::Vector2f resolution,
+                   int tileSize)
+{
+    // Place the player in the middle of the arena
+    m_Position.x = arena.width / 2;
+    m_Position.y = arena.height / 2;
+    // Copy the details of the arena
+    // to the palyer's m_Arena
+    m_Arena.left = arena.left;
+    m_Arena.width = arena.width;
+    m_Arena.top = arena.top;
+    m_Arena.height = arena.height;
+    // Remember how big the tiles are in this arena
+    m_TileSize = tileSize;
+    // Store the resolution for future use
+    m_Resolution.x = resolution.x;
+    m_Resolution.y = resolution.y;
+}
 
-        void Player::resetPlayerStats()
-        {
-            m_Speed = START_SPEED;
-            m_Health = START_HEALTH;
-            m_MaxHealth = START_HEALTH;
-        }
+void Player::resetPlayerStats()
+{
+    m_Speed = START_SPEED;
+    m_Health = START_HEALTH;
+    m_MaxHealth = START_HEALTH;
+}
 
-        sf::Time Player::getLastHitTime()
-        {
-            return m_LastHit;
-        }
+sf::Time Player::getLastHitTime()
+{
+    return m_LastHit;
+}
 
-        bool Player::hit(sf::Time timeHit)
-        {
-            if(timeHit.asMilliseconds()
-                -m_LastHit.asMilliseconds() > 200)
-                {
-                    m_LastHit = timeHit;
-                    m_Health -= 10;
-                    return true;
-                }
-                else
-                {
-                    false;
-                }
-            
-            return false;
-        }
+bool Player::hit(sf::Time timeHit)
+{
+    if (timeHit.asMilliseconds() - m_LastHit.asMilliseconds() > 200)
+    {
+        m_LastHit = timeHit;
+        m_Health -= 10;
+        return true;
+    }
+    else
+    {
+        false;
+    }
 
-        sf::FloatRect Player::getPosition()
-        {
-            return m_Sprite.getGlobalBounds();
-        }
+    return false;
+}
 
-        sf::Vector2f Player::getCenter()
-        {
-            return m_Position;
-        }
+sf::FloatRect Player::getPosition()
+{
+    return m_Sprite.getGlobalBounds();
+}
 
-        float Player::getRotation()
-        {
-            return m_Sprite.getRotation();
-        }
+sf::Vector2f Player::getCenter()
+{
+    return m_Position;
+}
 
-        sf::Sprite Player::getSprite()
-        {
-            return m_Sprite;
-        }
+float Player::getRotation()
+{
+    return m_Sprite.getRotation();
+}
 
-        int Player::getHealth()
-        {
-            return m_Health;
-        }
+sf::Sprite Player::getSprite()
+{
+    return m_Sprite;
+}
 
-        void Player::moveLeft()
-        {
-            m_LeftPressed = true;
-        }
+int Player::getHealth()
+{
+    return m_Health;
+}
 
-        void Player::moveRight()
-        {
-            m_RightPressed = true;
-        }
+void Player::moveLeft()
+{
+    m_LeftPressed = true;
+}
 
-        void Player::moveUp()
-        {
-            m_UpPressed = true;
-        }
+void Player::moveRight()
+{
+    m_RightPressed = true;
+}
 
-        void Player::moveDown()
-        {
-            m_DownPressed = true;
-        }
+void Player::moveUp()
+{
+    m_UpPressed = true;
+}
 
-        void Player::stopLeft()
-        {
-            m_LeftPressed = false;
-        }
+void Player::moveDown()
+{
+    m_DownPressed = true;
+}
 
-        void Player::stopRight()
-        {
-            m_RightPressed = false;
-        }
+void Player::stopLeft()
+{
+    m_LeftPressed = false;
+}
 
-        void Player::stopUp()
-        {
-            m_UpPressed = false;
-        }
+void Player::stopRight()
+{
+    m_RightPressed = false;
+}
 
-        void Player::stopDown()
-        {
-            m_DownPressed = false;
-        }
+void Player::stopUp()
+{
+    m_UpPressed = false;
+}
 
-        void Player::update(float elapsedTime, sf::Vector2i mousePosition)
-        {
-            if(m_UpPressed)
-            {
-                m_Position.y -= m_Speed * elapsedTime;
-            }
-            if(m_DownPressed)
-            {
-                m_Position.y += m_Speed *elapsedTime;
-            }
-            if(m_RightPressed)
-            {
-                m_Position.x += m_Speed *elapsedTime;
-            }
-            if(m_LeftPressed)
-            {
-                m_Position.x -= m_Speed *elapsedTime;
-            }
-            m_Sprite.setPosition(m_Position);
-            // Keep player in the arena
-            if(m_Position.x > m_Arena.width - m_TileSize)
-            {
-                m_Position.x = m_Arena.width - m_TileSize;
-            }
-            if(m_Position.x < m_Arena.left + m_TileSize)
-            {
-                m_Position.x = m_Arena.left + m_TileSize;
-            }
-            if(m_Position.y > m_Arena.height - m_TileSize)
-            {
-                m_Position.y = m_Arena.height - m_TileSize;
-            }
-            if(m_Position.y < m_Arena.top + m_TileSize)
-            {
-                m_Position.y = m_Arena.top + m_TileSize;
-            }
+void Player::stopDown()
+{
+    m_DownPressed = false;
+}
 
-            // Calculate the angle the player is facing
-            float angle = (std::atan2(mousePosition.y - m_Resolution.y /2,
-                mousePosition.x - m_Resolution.x / 2) * 180) / 3.141;
-            m_Sprite.setRotation(angle);
-        }
+void Player::update(float elapsedTime, sf::Vector2i mousePosition)
+{
+    if (m_UpPressed)
+    {
+        m_Position.y -= m_Speed * elapsedTime;
+    }
+    if (m_DownPressed)
+    {
+        m_Position.y += m_Speed * elapsedTime;
+    }
+    if (m_RightPressed)
+    {
+        m_Position.x += m_Speed * elapsedTime;
+    }
+    if (m_LeftPressed)
+    {
+        m_Position.x -= m_Speed * elapsedTime;
+    }
 
-        void Player::upgradeSpeed()
-        {
-            // 20% speed upgrade
-            m_Speed += (START_SPEED * .2);
-        }
+    m_Sprite.setPosition(m_Position);
 
-        void Player::upgradeHealth()
-        {
-            // 20% max health upgrade
-            m_MaxHealth += (START_HEALTH * .2);
-        }
+    // FLAG #3 TELEPORTATION FLAG
 
-        void Player::increaseHealthLevel(int amount)
-        {
-            m_Health += amount;
-            // But not beyond the maximum
-            if(m_Health > m_MaxHealth)
-            {
-                m_Health = m_MaxHealth;
-            }
-        }
+    // Tests
+    //sf::Vector2f test(6100.0f, 6100.0f);
+    //if (playerSet == false && teleportZone.contains(test))
+
+    if (playerSet == false && teleportZone.contains(m_Position))
+    {
+        *s = State::MENU;
+        playerSet = true;
+    }
+
+    // Keep player in the arena
+    if (m_Position.x > m_Arena.width - m_TileSize)
+    {
+        m_Position.x = m_Arena.width - m_TileSize;
+    }
+    if (m_Position.x < m_Arena.left + m_TileSize)
+    {
+        m_Position.x = m_Arena.left + m_TileSize;
+    }
+    if (m_Position.y > m_Arena.height - m_TileSize)
+    {
+        m_Position.y = m_Arena.height - m_TileSize;
+    }
+    if (m_Position.y < m_Arena.top + m_TileSize)
+    {
+        m_Position.y = m_Arena.top + m_TileSize;
+    }
+
+    // Calculate the angle the player is facing
+    float angle = (std::atan2(mousePosition.y - m_Resolution.y / 2,
+                              mousePosition.x - m_Resolution.x / 2) *
+                   180) /
+                  3.141;
+    m_Sprite.setRotation(angle);
+}
+
+void Player::upgradeSpeed()
+{
+    // 20% speed upgrade
+    m_Speed += (START_SPEED * .2);
+}
+
+void Player::upgradeHealth()
+{
+    // 20% max health upgrade
+    m_MaxHealth += (START_HEALTH * .2);
+}
+
+void Player::increaseHealthLevel(int amount)
+{
+    m_Health += amount;
+    // But not beyond the maximum
+    if (m_Health > m_MaxHealth)
+    {
+        m_Health = m_MaxHealth;
+    }
+}
