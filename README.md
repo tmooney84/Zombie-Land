@@ -51,7 +51,7 @@ ZombieLand contains 3 flags:
 
     ghvctf{MRSPOCK66}
 
-- Each of the flags will popup when found displaying the flag name and code
+- Each of the flags will pop up when found displaying the flag name and code
 - Each of the flags codes are obfuscated using several different methods including (non-null terminated character arrays, XOR encryption, etc.) and are only reconstituted at runtime when triggered players finding flags
 
 ## Architecture
