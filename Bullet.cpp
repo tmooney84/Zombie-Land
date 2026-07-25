@@ -1,7 +1,7 @@
 #include "Bullet.h"
 
 
-sf::FloatRect teleportZone(6000.0f, 6000.0f, 200.0f, 200.0f);
+sf::FloatRect teleportZone(16000.0f, 16000.0f, 200.0f, 200.0f);
 
 // bullet shape is 2 x 2 pixels
 Bullet::Bullet()
