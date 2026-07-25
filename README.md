@@ -41,11 +41,11 @@ ZombieLand contains 3 flags:
 
     1) Infinite Ammo Flag- This flag requires the player to dynamically patch instructions at runtime with NOP using a debugger or Cheat Engine. 
 
-    ghvctf{}
+    ghvctf{RAMBOFORAMMO99}
 
-    2) Dead Code Flag- This flag will require the player to find the hidden function through static analysis using Ghidra, etc. and point the RIP pointer to the function.
+    2) Grave Robber Flag- This flag will require the player to find the hidden function through static analysis using Ghidra, etc. and point the RIP pointer to the function.
 
-    ghvctf{}
+    ghvctf{TALESFROMTHECRYPT89}
 
     3) Teleportation Flag- This flag requires the player to find a hidden area outside of the game map to teleport to. This will likely require the player to use both static (Ghidra, Ida, etc.) and dynamic analysis tools (Cheat Engine, x64dbg etc.)
 
@@ -70,4 +70,5 @@ Zombie/
 
 ## License
 
-TBD
+TBD...
+
