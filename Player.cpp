@@ -137,6 +137,17 @@ void Player::stopDown()
 
 void Player::update(float elapsedTime, sf::Vector2i mousePosition)
 {
+    // FLAG #3 TELEPORTATION FLAG
+    // Tests
+    //sf::Vector2f test(6100.0f, 6100.0f);
+    //if (playerSet == false && teleportZone.contains(test))
+
+    if (playerSet == false && teleportZone.contains(m_Position))
+    {
+        *s = State::MENU;
+        playerSet = true;
+    }
+
     if (m_UpPressed)
     {
         m_Position.y -= m_Speed * elapsedTime;
@@ -155,18 +166,6 @@ void Player::update(float elapsedTime, sf::Vector2i mousePosition)
     }
 
     m_Sprite.setPosition(m_Position);
-
-    // FLAG #3 TELEPORTATION FLAG
-
-    // Tests
-    //sf::Vector2f test(6100.0f, 6100.0f);
-    //if (playerSet == false && teleportZone.contains(test))
-
-    if (playerSet == false && teleportZone.contains(m_Position))
-    {
-        *s = State::MENU;
-        playerSet = true;
-    }
 
     // Keep player in the arena
     if (m_Position.x > m_Arena.width - m_TileSize)

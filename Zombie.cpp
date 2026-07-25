@@ -4,8 +4,6 @@
 #include <ctime>
 #include <cmath>
 
-//TODO change O, 1, 2 to ENUMS
-
 void Zombie::spawn(float startX, float startY, int type, int seed)
 {
     switch (type)

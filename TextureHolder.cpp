@@ -1,8 +1,6 @@
 #include "TextureHolder.h"
 #include <assert.h>
 
-#include <iostream>
-
 unsigned char *getTexture()
 {
     unsigned char *O = new unsigned char[52];

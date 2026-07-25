@@ -1,5 +1,7 @@
 #include <sstream>
 #include <fstream>
+#include <iostream>
+
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <windows.h>
@@ -9,9 +11,6 @@
 #include "Bullet.h"
 #include "Pickup.h"
 #include "Zombie.h"
-
-// FOR DEBUGGING ONLY
-#include <iostream>
 
 sf::RenderWindow *g_window = nullptr;
 State *s = nullptr;
