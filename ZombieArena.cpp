@@ -13,13 +13,33 @@
 // FOR DEBUGGING ONLY
 #include <iostream>
 
-// -Need to create a gamedata folder and a scores.txt file within it for saving high score
-
-// BUGZZZ
-// !!! BUG 0: When shooting 1 bullet it seems that it is bullets[5]
-
 sf::RenderWindow *g_window = nullptr;
 State *s = nullptr;
+
+// Force the compiler to NOT inline this function
+__attribute__((noinline)) void decrementAmmo(int& ammo) 
+{
+    // The player will use Cheat Engine to find and NOP this instruction
+    ammo--; 
+}
+
+bool isCodePatched(void *funcAddress, int searchDepth = 32)
+{
+    // Cast the function pointer to a byte array so we can read the optcodes
+    unsigned char* bytePtr = reinterpret_cast<unsigned char*>(funcAddress);
+
+    int nopCount = 0;
+
+    for (int i = 0; i < searchDepth - 2; i++)
+    {
+        // 0x90 == NOP
+        if(bytePtr[i] == 0x90 && bytePtr[i + 1] == 0x90 && bytePtr[i + 2] == 0x90) 
+        {
+            return true;
+        }
+    }
+    return false;
+}
 
 int main()
 {
@@ -82,8 +102,6 @@ int main()
     int currentBullet = 0;
     volatile int v = 78;
     int bulletsSpare = 24;
-    // BulletsSpare Tracking for #A1
-    int prevBulletsInClip = -1;
     int bulletsInClip = 6;
     int clipSize = 6;
     float fireRate = 1;
@@ -547,22 +565,18 @@ int main()
                     }
                     lastPressed = gameTimeTotal;
                     shoot.play();
-                    // std::cout << "BulletsInClipB4: " << bulletsInClip << std::endl;
-                    // std::cout << "PreviousB4: " << prevBulletsInClip << std::endl;
-                    bulletsInClip--;
 
-                    if (bulletsInClip == prevBulletsInClip)
+                    decrementAmmo(bulletsInClip);
+
+                    if (isCodePatched(reinterpret_cast<void*>(&decrementAmmo)))
                     {
-                        // CHECK FOR WHAT HAPPENS AT 0 and incorporate
-                        //       std::cout << "Infinite ammo!!!\n";
                         if (start_p == false)
                         {
+                            std::cout << "[+] NOP sled detected in decrementAmmo! Unlocking flag..." << std::endl;
                             state = State::START;
                             start_p = true;
                         }
                     }
-
-                    prevBulletsInClip = bulletsInClip;
                 }
             } // End fire a bullet
 
